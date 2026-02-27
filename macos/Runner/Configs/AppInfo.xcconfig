@@ -8,7 +8,7 @@
 PRODUCT_NAME = mobo_rental
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.cybrosys.moboRental
+PRODUCT_BUNDLE_IDENTIFIER = com.cybrosys.mobo-rental
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.cybrosys. All rights reserved.

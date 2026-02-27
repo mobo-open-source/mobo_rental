@@ -174,8 +174,8 @@ class ReviewService {
         scheme: 'mailto',
         path: 'cybroplay@gmail.com', // Updated support email
         query: encodeQueryParameters(<String, String>{
-          'subject': 'Feedback for Odoo Mobile Community (${rating.toInt()} Stars)',
-          'body': 'Rating: ${rating.toInt()}/5\n\nComment:\n$comment\n\n---\nSent from Odoo Mobile Community'
+          'subject': 'Feedback for Mobo Rental for Odoo (${rating.toInt()} Stars)',
+          'body': 'Rating: ${rating.toInt()}/5\n\nComment:\n$comment\n\n---\nSent from Mobo Rental for Odoo'
         }),
       );
 
