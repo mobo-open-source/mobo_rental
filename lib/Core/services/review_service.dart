@@ -23,6 +23,7 @@ class ReviewService {
   static const String _keyFirstOpenDate = 'review_first_open_date';
   static const String _keyLastRequestDate = 'review_last_request_date';
   static const String _keyNeverAskAgain = 'review_never_ask_again';
+  static const String _keyFeedbackGiven = 'review_feedback_given';
 
   // Thresholds
   static const int _thresholdOpens = 5; 
@@ -99,12 +100,10 @@ class ReviewService {
         final lastRequest = DateTime.fromMillisecondsSinceEpoch(lastRequestEpoch);
         final daysSinceLastRequest = DateTime.now().difference(lastRequest).inDays;
         
-        // Request again only if it's been a long time (e.g. 30 days)
-        if (daysSinceLastRequest < 30) {
-          if (kDebugMode) {
-          } else {
-            return;
-          }
+        int waitDays = (prefs.getBool(_keyFeedbackGiven) ?? false) ? 180 : 30;
+
+        if (daysSinceLastRequest < waitDays) {
+          return;
         }
       }
 
@@ -139,7 +138,7 @@ class ReviewService {
     // Show a small snackbar so the user knows the code is working
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(
-        content: const Text('🔄 Requesting Google Play review...'),
+        content: const Text('🔄 Requesting Store review...'),
         duration: const Duration(seconds: 2),
         backgroundColor: Colors.blue[700],
       ),
@@ -200,6 +199,25 @@ class ReviewService {
     await prefs.setBool(_keyNeverAskAgain, true);
   }
 
+  /// Postpone review until next month (30 days)
+  Future<void> postponeReview() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(
+      _keyLastRequestDate,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
+  /// Mark that user gave feedback (1-3 stars) to trigger 6-month cooldown
+  Future<void> markFeedbackGiven() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyFeedbackGiven, true);
+    await prefs.setInt(
+      _keyLastRequestDate,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
   /// Prints the current review tracking statistics to the debug console.
   Future<void> printReviewStats() async {
     final prefs = await SharedPreferences.getInstance();
@@ -231,5 +249,6 @@ class ReviewService {
     await prefs.remove(_keyFirstOpenDate);
     await prefs.remove(_keyLastRequestDate);
     await prefs.remove(_keyNeverAskAgain);
+    await prefs.remove(_keyFeedbackGiven);
   }
 }
